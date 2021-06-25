@@ -3,6 +3,11 @@
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
+COMMA = ,
+ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
+	  NJOBS := -j $(subst parallel=,,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
+  endif
+
 
 # see FEATURE AREAS in dpkg-buildflags(1)
 #export DEB_BUILD_MAINT_OPTIONS = hardening=+all
@@ -23,3 +28,20 @@
 #override_dh_auto_configure:
 #	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
 
+
+CONFIGUREFLAGS += -DCMAKE_INSTALL_PREFIX=/usr
+CONFIGUREFLAGS += -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu
+CONFIGUREFLAGS += -DBUILD_SHARED_LIBS=ON
+
+configure-stamp:
+	dh_testdir
+	$(MAKE) -C jquery install
+	rm -rf build
+	mkdir -p build
+	cd cd build && cmake -G "Unix Makefiles" $(CONFIGUREFLAGS) $(CURDIR)
+	touch $@
+
+build-stamp: configure-stamp
+	dh_testdir
+	$(MAKE) -C build $(NJOBS) VERBOSE=1
+	touch $@
