@@ -10,7 +10,19 @@ ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
 
 
 # see FEATURE AREAS in dpkg-buildflags(1)
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DH_OPTIONS=
+
+
+CFLAGS := $(shell dpkg-buildflags --get CPPFLAGS; dpkg-buildflags --get CFLAGS)
+CXXFLAGS := $(shell dpkg-buildflags --get CPPFLAGS; dpkg-buildflags --get CXXFLAGS)
+LDFLAGS := $(shell dpkg-buildflags --get LDFLAGS)
+export CFLAGS
+export CXXFLAGS
+export LDFLAGS
+DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 # see ENVIRONMENT in dpkg-buildflags(1)
 # package maintainers to append CFLAGS
@@ -35,13 +47,19 @@ CONFIGUREFLAGS += -DBUILD_SHARED_LIBS=ON
 
 configure-stamp:
 	dh_testdir
-	$(MAKE) -C jquery install
 	rm -rf build
 	mkdir -p build
-	cd cd build && cmake -G "Unix Makefiles" $(CONFIGUREFLAGS) $(CURDIR)
+	cd build && cmake -G "Unix Makefiles" $(CONFIGUREFLAGS) $(CURDIR)
 	touch $@
 
 build-stamp: configure-stamp
 	dh_testdir
 	$(MAKE) -C build $(NJOBS) VERBOSE=1
 	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -rf build
+	dh_clean
+
