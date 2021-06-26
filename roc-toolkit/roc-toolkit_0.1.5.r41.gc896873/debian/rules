@@ -13,13 +13,40 @@
 # package maintainers to append LDFLAGS
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
+_PREFIX := $(CURDIR)/debian/tmp/usr
+_LIBDIR := $(_PREFIX)/lib/$(DEB_HOST_MULTIARCH)
+
+SCONS=scons
+DEB_SCONS_OPTIONS := --prefix=$(_PREFIX) --libdir=$(_LIBDIR) --with-openfec-includes=/usr/include/openfec --disable-examples --build-3rdparty=pulseaudio --enable-pulseaudio-modules --enable-debug --enable-debug-3rdparty 
+
+COMMA = ,
+ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
+	  NJOBS := -j $(subst parallel=,,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
+endif
+
+
+export CFLAGS += -g
+
 
 %:
 	dh $@
 
 
-# dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
 #override_dh_auto_configure:
 #	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
+
+override_dh_auto_build:
+	$(SCONS) $(DEB_SCONS_OPTIONS) $(NJOBS) 
+
+override_dh_install:
+	$(SCONS) $(DEB_SCONS_OPTIONS) install
+	dh_install
+
+override_dh_shlibdeps:
+	LD_LIBRARY_PATH="3rdparty/x86_64-pc-linux-gnu/gcc-9.3.0-release/build/pulseaudio-13.99.1/lib:$(LD_LIBRARY_PATH)" dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
+override_dh_auto_clean:
+	-scons --clean
+	dh_clean
 
