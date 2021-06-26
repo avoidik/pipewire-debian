@@ -1,5 +1,4 @@
 #!/usr/bin/make -f
-# See debhelper(7) (uncomment to enable)
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
@@ -34,7 +33,6 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 	dh $@
 
 
-# dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
 
 
@@ -49,4 +47,8 @@ override_dh_auto_configure:
 	find debian/headers/openfec/ -type f -not -iname '*.h' -delete
 	find debian/headers/openfec/ -type d -empty -delete
 
-
+# For ubuntu 18.04 or ubuntu < 20.04(exp) uncomment below line
+#override_dh_dwz:
+	    # This fixes for failed with 
+		# dh_dwz: dwz -q -- debian/openfec/usr/lib/x86_64-linux-gnu/libopenfec.so.1.4.2 returned exit code 1
+		

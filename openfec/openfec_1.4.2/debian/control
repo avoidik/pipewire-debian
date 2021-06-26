@@ -1,5 +1,5 @@
 Source: openfec
-Section: sound
+Section: libs
 Priority: optional
 Maintainer: Sourav Das <souravdas142@gmail.com>
 Build-Depends: cmake,
