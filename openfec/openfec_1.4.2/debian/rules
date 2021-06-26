@@ -11,8 +11,7 @@ ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
 
 # see FEATURE AREAS in dpkg-buildflags(1)
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-export DH_OPTIONS=
-
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,-z,defs -Wl,--as-needed
 
 CFLAGS := $(shell dpkg-buildflags --get CPPFLAGS; dpkg-buildflags --get CFLAGS)
 CXXFLAGS := $(shell dpkg-buildflags --get CPPFLAGS; dpkg-buildflags --get CXXFLAGS)
@@ -37,29 +36,17 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
-#override_dh_auto_configure:
-#	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
 
 
-CONFIGUREFLAGS += -DCMAKE_INSTALL_PREFIX=/usr
-CONFIGUREFLAGS += -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu
+#CONFIGUREFLAGS += -DCMAKE_INSTALL_PREFIX=/usr
+#CONFIGUREFLAGS += -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu
 CONFIGUREFLAGS += -DBUILD_SHARED_LIBS=ON
 
-configure-stamp:
-	dh_testdir
-	rm -rf build
-	mkdir -p build
-	cd build && cmake -G "Unix Makefiles" $(CONFIGUREFLAGS) $(CURDIR)
-	touch $@
+override_dh_auto_configure:
+	dh_auto_configure -- $(CONFIGUREFLAGS)
+	install -d debian/headers
+	cp -rfT src	debian/headers/openfec
+	find debian/headers/openfec/ -type f -not -iname '*.h' -delete
+	find debian/headers/openfec/ -type d -empty -delete
 
-build-stamp: configure-stamp
-	dh_testdir
-	$(MAKE) -C build $(NJOBS) VERBOSE=1
-	touch $@
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -rf build
-	dh_clean
 
