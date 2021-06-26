@@ -13,4 +13,4 @@ Package: openfec
 Architecture: linux-any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Open Forward Erasure Codes
+Description: Open Forward Erasure Codes, openfec

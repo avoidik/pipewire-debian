@@ -5,7 +5,7 @@
 COMMA = ,
 ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
 	  NJOBS := -j $(subst parallel=,,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
-  endif
+endif
 
 
 # see FEATURE AREAS in dpkg-buildflags(1)
