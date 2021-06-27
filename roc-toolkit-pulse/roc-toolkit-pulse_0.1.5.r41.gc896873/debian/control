@@ -1,4 +1,4 @@
-Source: roc-toolkit
+Source: roc-toolkit-pulse
 Section: sound
 Priority: optional
 Maintainer: Sourav Das <souravdas142@gmail.com>
@@ -25,7 +25,7 @@ Homepage: https://roc-project.github.io
 Vcs-Browser: https://github.com/pipewire-debian/pipewire-debian
 Vcs-Git: https://github.com/pipewire-debian/pipewire-debian.git
 
-Package: roc
+Package: roc-pulse
 Architecture: linux-any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}

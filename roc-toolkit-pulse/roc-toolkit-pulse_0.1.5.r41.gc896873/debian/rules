@@ -46,9 +46,10 @@ override_dh_install:
 	dh_install
 
 override_dh_shlibdeps:
-	dh_shlibdeps -proc -l/usr/lib/$(DEB_HOST_MULTIARCH)/pulseaudio -- -Ldebian/roc.shlibs.local 
+	dh_shlibdeps -proc-pulse -l/usr/lib/$(DEB_HOST_MULTIARCH)/pulseaudio -- -Ldebian/roc-pulse.shlibs.local 
 
 override_dh_auto_clean:
 	-scons --clean
+	rm -rf site_scons/site_tools/roc/__pycache__/
 	dh_clean
 
