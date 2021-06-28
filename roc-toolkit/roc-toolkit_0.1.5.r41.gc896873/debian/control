@@ -4,15 +4,21 @@ Priority: optional
 Maintainer: Sourav Das <souravdas142@gmail.com>
 Build-Depends: debhelper-compat (= 12),
 # for Roc
+               curl,
+               doxygen,
 			   gengetopt, 
+               graphviz,
 			   libcpputest-dev,
 			   libpulse-dev,
 			   libsox-dev,
 			   libunwind-dev,
 			   libuv1-dev,
 			   pkg-config,
+               python3-sphinx,
+               python3-breathe,
 			   ragel,
 			   scons,
+               wget,
 # for 3rd-parties
 			   autoconf,
 			   automake,
